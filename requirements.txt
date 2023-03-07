@@ -1,0 +1,7 @@
+selenium
+boto3
+scrapy
+beautifulsoup4
+pyvirtualdisplay
+pandas
+webdriver_manager
