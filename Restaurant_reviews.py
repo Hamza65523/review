@@ -1,5 +1,5 @@
 import time
-
+import os
 import csv
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions, ActionChains
@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from scrapy import Selector
 from selenium.webdriver.support.wait import WebDriverWait
 import boto3
+from webdriver_manager.chrome import ChromeDriverManager
+from dotenv import load_dotenv
 
 options = ChromeOptions()
 options.add_argument("--disable-blink-features")
@@ -16,9 +18,17 @@ options.add_argument("--incognito")
 options.add_argument("--disable-images")
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_argument("--use-fake-ui-for-media-stream")
+options.add_argument('--no-sandbox')
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(options=options)
+
+def configure():
+        load_dotenv()
+
 s3_output_bucket = 'sureter-reviews-bucket'
-s3 = boto3.client('s3')
+s3 = boto3.resource('s3',aws_access_key_id=f'{os.getenv("aws_access_key")}',aws_secret_access_key=f'{os.getenv("aws_secret_key")}')
 
 index = 1
 
@@ -147,9 +157,9 @@ def main():
         for row in csv_reader:
             tripadvisor_restaurant(row)
 
-
 if __name__ == "__main__":
     main()
-    s3.put_object(Bucket=s3_output_bucket, Key=file_name, Body=file_name)
-
+    file_name = 'Restaurant-reviews-' + time.strftime("%Y-%m-%d") + '.csv'
+    s3.meta.client.upload_file('./AI_input.csv', s3_output_bucket,file_name)
     # google_restaurant()
+
