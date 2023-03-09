@@ -84,13 +84,11 @@ def tripadvisor_restaurant(row):
     try:
         link = driver.find_element(By.XPATH, "//*/div/div[2]/div[2]/div/p/span[2]")
 
-        time.sleep(1)
         if link:
             actions = ActionChains(driver)
             actions.click(link)
             actions.perform()
 
-        time.sleep(1)
     except Exception as e:
         pass
     soup2 = BeautifulSoup(driver.page_source, "html.parser")
@@ -123,26 +121,26 @@ def google_restaurant(restaurant_name, restaurant_add):
         WebDriverWait(driver, 1)
         try:
             driver.find_element(By.XPATH, "//*[@class='hqzQac']").click()
-            time.sleep(2)
+            time.sleep(1.5)
         except:
             try:
                 driver.find_element(By.XPATH, "//*[@class='qB0t4']").click()
-                time.sleep(2)
+                time.sleep(1.5)
             except:
                 pass
         try:
             driver.find_element(By.XPATH, "//*[@data-sort-id='newestFirst']").click()
-            time.sleep(2)
+            time.sleep(1.5)
             resp = Selector(text=driver.page_source)
             restaurant_review = resp.css('div.Jtu6Td > span >span:nth-child(-n+10)::text')
-            # review_text = [review.get().strip() if review is not None else '' for review in restaurant_review]
+            review_text = [review.get().strip() if review is not None else '' for review in restaurant_review]
             for review in restaurant_review:
                 if review is not None:
                     if review_text == "":
                         review_text = review.get().strip()
                     else:
                         review_text = review_text + " " + review.get().strip()
-            # print('Reviews: ', review_text)
+            print('Reviews: ', review_text)
         except:
             pass
     except:
